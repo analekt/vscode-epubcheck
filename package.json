@@ -1,0 +1,124 @@
+{
+    "name": "vscode-epubcheck",
+    "displayName": "EPUBCheck",
+    "description": "EPUB conformance checker and generator for VS Code, powered by the official W3C EPUBCheck tool",
+    "version": "0.1.0",
+    "publisher": "epubcheck",
+    "license": "MIT",
+    "engines": {
+        "vscode": "^1.85.0"
+    },
+    "categories": [
+        "Linters",
+        "Other"
+    ],
+    "keywords": [
+        "epub",
+        "epubcheck",
+        "validation",
+        "ebook",
+        "publishing"
+    ],
+    "activationEvents": [
+        "workspaceContains:**/mimetype"
+    ],
+    "main": "./dist/extension.js",
+    "contributes": {
+        "commands": [
+            {
+                "command": "epubcheck.generateAndValidate",
+                "title": "EPUBCheck: Generate and Validate EPUB"
+            },
+            {
+                "command": "epubcheck.generateOnly",
+                "title": "EPUBCheck: Generate EPUB Only"
+            },
+            {
+                "command": "epubcheck.validateWithReport",
+                "title": "EPUBCheck: Generate EPUB and Validation Report"
+            }
+        ],
+        "menus": {
+            "explorer/context": [
+                {
+                    "command": "epubcheck.generateAndValidate",
+                    "when": "explorerResourceIsFolder && config.epubcheck.showContextMenu",
+                    "group": "epubcheck@1"
+                },
+                {
+                    "command": "epubcheck.generateOnly",
+                    "when": "explorerResourceIsFolder && config.epubcheck.showContextMenu",
+                    "group": "epubcheck@2"
+                },
+                {
+                    "command": "epubcheck.validateWithReport",
+                    "when": "explorerResourceIsFolder && config.epubcheck.showContextMenu",
+                    "group": "epubcheck@3"
+                }
+            ]
+        },
+        "configuration": {
+            "title": "EPUBCheck",
+            "properties": {
+                "epubcheck.jarPath": {
+                    "type": "string",
+                    "default": "",
+                    "markdownDescription": "Path to `epubcheck.jar` file. Download from [EPUBCheck releases](https://github.com/w3c/epubcheck/releases)."
+                },
+                "epubcheck.javaPath": {
+                    "type": "string",
+                    "default": "java",
+                    "markdownDescription": "Path to Java executable. Requires Java 11 or above."
+                },
+                "epubcheck.reportFormat": {
+                    "type": "string",
+                    "enum": [
+                        "markdown",
+                        "text",
+                        "json"
+                    ],
+                    "enumDescriptions": [
+                        "Markdown format with tables and links",
+                        "Plain text format",
+                        "Raw JSON output from EPUBCheck"
+                    ],
+                    "default": "markdown",
+                    "description": "Format for exported validation reports."
+                },
+                "epubcheck.reportDirectory": {
+                    "type": "string",
+                    "default": "",
+                    "description": "Directory to save validation reports. Leave empty to use the workspace root."
+                },
+                "epubcheck.timeout": {
+                    "type": "number",
+                    "default": 120,
+                    "description": "Timeout in seconds for EPUBCheck execution."
+                },
+                "epubcheck.showContextMenu": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Show EPUBCheck commands in the Explorer context menu."
+                }
+            }
+        }
+    },
+    "scripts": {
+        "vscode:prepublish": "npm run package",
+        "compile": "node esbuild.js",
+        "watch": "node esbuild.js --watch",
+        "package": "node esbuild.js --production",
+        "lint": "eslint src --ext ts",
+        "test": "node ./out/test/runTest.js"
+    },
+    "devDependencies": {
+        "@types/mocha": "^10.0.6",
+        "@types/node": "^20.11.0",
+        "@types/vscode": "^1.85.0",
+        "@typescript-eslint/eslint-plugin": "^6.15.0",
+        "@typescript-eslint/parser": "^6.15.0",
+        "esbuild": "^0.19.11",
+        "eslint": "^8.56.0",
+        "typescript": "^5.3.3"
+    }
+}
