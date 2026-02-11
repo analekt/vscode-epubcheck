@@ -36,6 +36,14 @@
             {
                 "command": "epubcheck.validateWithReport",
                 "title": "EPUBCheck: Generate EPUB and Validation Report"
+            },
+            {
+                "command": "epubcheck.selectJarPath",
+                "title": "EPUBCheck: Select epubcheck.jar"
+            },
+            {
+                "command": "epubcheck.selectReportDirectory",
+                "title": "EPUBCheck: Select Report Directory"
             }
         ],
         "menus": {
@@ -63,7 +71,7 @@
                 "epubcheck.jarPath": {
                     "type": "string",
                     "default": "",
-                    "markdownDescription": "Path to `epubcheck.jar` file. Download from [EPUBCheck releases](https://github.com/w3c/epubcheck/releases)."
+                    "markdownDescription": "Path to `epubcheck.jar` file. [Browse...](command:epubcheck.selectJarPath) | Download from [EPUBCheck releases](https://github.com/w3c/epubcheck/releases)."
                 },
                 "epubcheck.javaPath": {
                     "type": "string",
@@ -88,7 +96,7 @@
                 "epubcheck.reportDirectory": {
                     "type": "string",
                     "default": "",
-                    "description": "Directory to save validation reports. Leave empty to use the workspace root."
+                    "markdownDescription": "Directory to save validation reports. [Browse...](command:epubcheck.selectReportDirectory) | Leave empty to use the workspace root."
                 },
                 "epubcheck.timeout": {
                     "type": "number",

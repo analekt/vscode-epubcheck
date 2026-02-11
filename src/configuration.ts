@@ -61,7 +61,7 @@ export class Configuration {
 
     /**
      * Validate that the jar path is configured and exists.
-     * Shows an error message with a link to settings if not.
+     * Shows an error message with Browse and Settings options if not.
      * @returns true if configuration is valid
      */
     static async validateJarPath(): Promise<boolean> {
@@ -69,9 +69,13 @@ export class Configuration {
 
         if (!jarPath) {
             const action = await vscode.window.showErrorMessage(
-                'EPUBCheck: Please configure the path to epubcheck.jar in settings.',
+                'EPUBCheck: Please configure the path to epubcheck.jar.',
+                'Browse...',
                 'Open Settings'
             );
+            if (action === 'Browse...') {
+                return await Configuration.browseJarPath() !== undefined;
+            }
             if (action === 'Open Settings') {
                 await vscode.commands.executeCommand(
                     'workbench.action.openSettings',
@@ -83,9 +87,13 @@ export class Configuration {
 
         if (!fs.existsSync(jarPath)) {
             const action = await vscode.window.showErrorMessage(
-                `EPUBCheck: epubcheck.jar not found at "${jarPath}". Please check your settings.`,
+                `EPUBCheck: epubcheck.jar not found at "${jarPath}".`,
+                'Browse...',
                 'Open Settings'
             );
+            if (action === 'Browse...') {
+                return await Configuration.browseJarPath() !== undefined;
+            }
             if (action === 'Open Settings') {
                 await vscode.commands.executeCommand(
                     'workbench.action.openSettings',
@@ -96,6 +104,53 @@ export class Configuration {
         }
 
         return true;
+    }
+
+    /**
+     * Open a file picker to select epubcheck.jar and save the path to settings.
+     * @returns The selected path, or undefined if cancelled
+     */
+    static async browseJarPath(): Promise<string | undefined> {
+        const uris = await vscode.window.showOpenDialog({
+            canSelectFiles: true,
+            canSelectFolders: false,
+            canSelectMany: false,
+            filters: { 'JAR files': ['jar'] },
+            title: 'Select epubcheck.jar',
+        });
+
+        if (!uris || uris.length === 0) {
+            return undefined;
+        }
+
+        const selectedPath = uris[0].fsPath;
+        const config = vscode.workspace.getConfiguration('epubcheck');
+        await config.update('jarPath', selectedPath, vscode.ConfigurationTarget.Global);
+        vscode.window.showInformationMessage(`EPUBCheck: jar path set to "${selectedPath}".`);
+        return selectedPath;
+    }
+
+    /**
+     * Open a folder picker to select the report directory and save to settings.
+     * @returns The selected path, or undefined if cancelled
+     */
+    static async browseReportDirectory(): Promise<string | undefined> {
+        const uris = await vscode.window.showOpenDialog({
+            canSelectFiles: false,
+            canSelectFolders: true,
+            canSelectMany: false,
+            title: 'Select Report Directory',
+        });
+
+        if (!uris || uris.length === 0) {
+            return undefined;
+        }
+
+        const selectedPath = uris[0].fsPath;
+        const config = vscode.workspace.getConfiguration('epubcheck');
+        await config.update('reportDirectory', selectedPath, vscode.ConfigurationTarget.Global);
+        vscode.window.showInformationMessage(`EPUBCheck: Report directory set to "${selectedPath}".`);
+        return selectedPath;
     }
 
     /**

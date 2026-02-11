@@ -42,6 +42,14 @@ export function activate(context: vscode.ExtensionContext): void {
         vscode.commands.registerCommand(
             'epubcheck.validateWithReport',
             (uri?: vscode.Uri) => handleValidateWithReport(uri)
+        ),
+        vscode.commands.registerCommand(
+            'epubcheck.selectJarPath',
+            () => Configuration.browseJarPath()
+        ),
+        vscode.commands.registerCommand(
+            'epubcheck.selectReportDirectory',
+            () => Configuration.browseReportDirectory()
         )
     );
 
