@@ -38,6 +38,10 @@
                 "title": "EPUBCheck: Generate EPUB and Validation Report"
             },
             {
+                "command": "epubcheck.unzipAndValidate",
+                "title": "EPUBCheck: Unzip EPUB and Validate"
+            },
+            {
                 "command": "epubcheck.selectJarPath",
                 "title": "EPUBCheck: Select epubcheck.jar"
             },
@@ -62,6 +66,11 @@
                     "command": "epubcheck.validateWithReport",
                     "when": "explorerResourceIsFolder && config.epubcheck.showContextMenu",
                     "group": "epubcheck@3"
+                },
+                {
+                    "command": "epubcheck.unzipAndValidate",
+                    "when": "resourceExtname == .epub",
+                    "group": "epubcheck@4"
                 }
             ]
         },
@@ -97,6 +106,11 @@
                     "type": "string",
                     "default": "",
                     "markdownDescription": "Directory to save validation reports. [Browse...](command:epubcheck.selectReportDirectory) | Leave empty to use the workspace root."
+                },
+                "epubcheck.deleteEpubAfterUnzip": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Delete the original .epub file after extracting with \"Unzip EPUB and Validate\"."
                 },
                 "epubcheck.timeout": {
                     "type": "number",

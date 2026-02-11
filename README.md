@@ -7,11 +7,13 @@ Validate expanded (unzipped) EPUB projects directly from VS Code, view errors in
 ## Features
 
 - **Generate and validate** EPUB files from expanded EPUB directories
+- **Unzip and validate** existing `.epub` files directly
 - **Problems panel** integration with inline error squiggles
 - **Status bar** indicator showing validation state
 - **Multiple EPUB** support — auto-detects all EPUB projects in your workspace
 - **Export reports** in Markdown, Text, or JSON format
-- **Context menu** — right-click folders in Explorer to run commands
+- **Context menu** — right-click folders or `.epub` files in Explorer to run commands
+- **File browser** for selecting `epubcheck.jar` and report directory
 
 ## Requirements
 
@@ -48,18 +50,23 @@ Open the Command Palette (`Cmd+Shift+P` / `Ctrl+Shift+P`) and type "EPUBCheck":
 | **EPUBCheck: Generate and Validate EPUB** | Validate the EPUB and generate a `.epub` file |
 | **EPUBCheck: Generate EPUB Only** | Generate a `.epub` file without detailed validation |
 | **EPUBCheck: Generate EPUB and Validation Report** | Validate, generate `.epub`, and save a report file |
+| **EPUBCheck: Unzip EPUB and Validate** | Extract `.epub` files and validate the contents |
+| **EPUBCheck: Select epubcheck.jar** | Browse for `epubcheck.jar` using a file picker |
+| **EPUBCheck: Select Report Directory** | Browse for the report output directory |
 
-You can also right-click on a folder in the Explorer to access these commands.
+You can also right-click on a folder in the Explorer to access the first three commands, or right-click on a `.epub` file to unzip and validate it.
 
 ## Settings
 
 | Setting | Default | Description |
 |---------|---------|-------------|
-| `epubcheck.jarPath` | `""` | Path to `epubcheck.jar` (required) |
+| `epubcheck.jarPath` | `""` | Path to `epubcheck.jar` (required). Use the Browse link in settings. |
 | `epubcheck.javaPath` | `"java"` | Path to Java executable |
 | `epubcheck.reportFormat` | `"markdown"` | Report format: `markdown`, `text`, or `json` |
-| `epubcheck.reportDirectory` | `"~/Desktop"` | Directory to save reports |
+| `epubcheck.reportDirectory` | `""` | Directory to save reports. Empty = workspace root. |
+| `epubcheck.deleteEpubAfterUnzip` | `false` | Delete `.epub` file after extracting |
 | `epubcheck.timeout` | `120` | Timeout in seconds |
+| `epubcheck.showContextMenu` | `true` | Show commands in Explorer context menu |
 
 ## How It Works
 

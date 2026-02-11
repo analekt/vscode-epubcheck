@@ -1,11 +1,13 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
+import * as fs from 'fs';
 import { Configuration } from './configuration';
 import { EpubDetector } from './epubDetector';
 import { EpubCheckRunner } from './epubcheckRunner';
 import { DiagnosticsProvider } from './diagnosticsProvider';
 import { StatusBar } from './statusBar';
 import { ReportGenerator } from './reportGenerator';
+import { EpubExtractor } from './epubExtractor';
 import { ValidationResult } from './types/epubcheck';
 
 /** Output channel for extension logs */
@@ -42,6 +44,10 @@ export function activate(context: vscode.ExtensionContext): void {
         vscode.commands.registerCommand(
             'epubcheck.validateWithReport',
             (uri?: vscode.Uri) => handleValidateWithReport(uri)
+        ),
+        vscode.commands.registerCommand(
+            'epubcheck.unzipAndValidate',
+            (uri?: vscode.Uri) => handleUnzipAndValidate(uri)
         ),
         vscode.commands.registerCommand(
             'epubcheck.selectJarPath',
@@ -269,6 +275,96 @@ async function handleValidateWithReport(uri?: vscode.Uri): Promise<void> {
 
     // Update status bar
     updateStatusBar(results);
+}
+
+/**
+ * Command: EPUBCheck: Unzip EPUB and Validate
+ * Finds all .epub files in the workspace, extracts them, and validates.
+ */
+async function handleUnzipAndValidate(uri?: vscode.Uri): Promise<void> {
+    if (!(await Configuration.validateJarPath())) {
+        return;
+    }
+
+    let epubFiles: string[];
+    if (uri) {
+        // Context menu: use the selected .epub file
+        epubFiles = [uri.fsPath];
+    } else {
+        // Command palette: find all .epub files in workspace
+        epubFiles = await EpubExtractor.findEpubFiles();
+        if (epubFiles.length === 0) {
+            vscode.window.showWarningMessage(
+                'EPUBCheck: No .epub files found in the workspace.'
+            );
+            return;
+        }
+    }
+
+    statusBar.setRunning();
+
+    const results: ValidationResult[] = [];
+
+    await vscode.window.withProgress(
+        {
+            location: vscode.ProgressLocation.Notification,
+            title: 'EPUBCheck',
+            cancellable: false,
+        },
+        async (progress) => {
+            for (let i = 0; i < epubFiles.length; i++) {
+                const epubFile = epubFiles[i];
+                const fileName = path.basename(epubFile);
+
+                // Extract
+                progress.report({
+                    message: `Extracting ${fileName}... (${i + 1}/${epubFiles.length})`,
+                    increment: (50 / epubFiles.length),
+                });
+
+                const extractedDir = await EpubExtractor.extract(epubFile);
+                if (!extractedDir) {
+                    vscode.window.showErrorMessage(
+                        `EPUBCheck: Failed to extract "${fileName}".`
+                    );
+                    continue;
+                }
+
+                // Delete original .epub if configured
+                if (Configuration.getDeleteEpubAfterUnzip()) {
+                    try {
+                        fs.unlinkSync(epubFile);
+                    } catch {
+                        // Ignore deletion errors
+                    }
+                }
+
+                // Validate
+                progress.report({
+                    message: `Validating ${fileName}... (${i + 1}/${epubFiles.length})`,
+                    increment: (50 / epubFiles.length),
+                });
+
+                const result = await EpubCheckRunner.run(extractedDir, false);
+                results.push(result);
+
+                if (result.error) {
+                    vscode.window.showErrorMessage(
+                        `EPUBCheck: ${result.error}`
+                    );
+                }
+            }
+        }
+    );
+
+    // Update diagnostics
+    diagnosticsProvider.updateDiagnostics(results);
+
+    // Update status bar
+    updateStatusBar(results);
+
+    // Show summary
+    showSummary(results);
 }
 
 /**

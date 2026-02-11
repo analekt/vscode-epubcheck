@@ -60,6 +60,14 @@ export class Configuration {
     }
 
     /**
+     * Get whether to delete .epub files after unzipping.
+     */
+    static getDeleteEpubAfterUnzip(): boolean {
+        const config = vscode.workspace.getConfiguration('epubcheck');
+        return config.get<boolean>('deleteEpubAfterUnzip', false);
+    }
+
+    /**
      * Validate that the jar path is configured and exists.
      * Shows an error message with Browse and Settings options if not.
      * @returns true if configuration is valid
