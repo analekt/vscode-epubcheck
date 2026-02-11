@@ -3,8 +3,9 @@
     "displayName": "EPUBCheck",
     "description": "EPUB conformance checker and generator for VS Code, powered by the official W3C EPUBCheck tool",
     "version": "0.1.0",
-    "publisher": "epubcheck",
+    "publisher": "analekt",
     "license": "MIT",
+    "icon": "icon.png",
     "repository": {
         "type": "git",
         "url": "https://github.com/analekt/vscode-epubcheck"
