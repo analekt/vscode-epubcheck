@@ -9,6 +9,10 @@ node_modules/**
 .claude/**
 claude.md
 tsconfig.json
+tsconfig.test.json
 esbuild.js
+.mocharc.yml
+.eslintrc.json
+test-todo.md
 **/*.ts
 **/*.map

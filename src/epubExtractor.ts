@@ -49,10 +49,8 @@ export class EpubExtractor {
                 proc = spawn('unzip', ['-o', epubPath, '-d', outputDir]);
             }
 
-            let stderr = '';
-
-            proc.stderr.on('data', (data: Buffer) => {
-                stderr += data.toString();
+            proc.stderr.on('data', () => {
+                // Consume stderr to prevent buffer overflow
             });
 
             proc.on('close', (code) => {
