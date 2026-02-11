@@ -65,6 +65,20 @@ export function activate(context: vscode.ExtensionContext): void {
         diagnosticsProvider.getDiagnosticCollection(),
         statusBar.getStatusBarItem()
     );
+
+    // Check if this is the first time the user has installed the extension
+    const hasShownEpubCheckLink = context.globalState.get<boolean>('hasShownEpubCheckLink', false);
+    if (!hasShownEpubCheckLink) {
+        vscode.window.showInformationMessage(
+            'EPUBCheck: enhanced for VS Code. Please ensure you have EPUBCheck installed.',
+            'Download EPUBCheck'
+        ).then(selection => {
+            if (selection === 'Download EPUBCheck') {
+                vscode.env.openExternal(vscode.Uri.parse('https://github.com/w3c/epubcheck/releases'));
+            }
+        });
+        context.globalState.update('hasShownEpubCheckLink', true);
+    }
 }
 
 /**

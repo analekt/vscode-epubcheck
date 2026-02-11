@@ -5,6 +5,13 @@
     "version": "0.1.0",
     "publisher": "epubcheck",
     "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/analekt/vscode-epubcheck"
+    },
+    "bugs": {
+        "url": "https://github.com/analekt/vscode-epubcheck/issues"
+    },
     "engines": {
         "vscode": "^1.85.0"
     },
